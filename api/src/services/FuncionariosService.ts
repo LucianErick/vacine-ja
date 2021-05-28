@@ -32,8 +32,9 @@ class FuncionariosService {
             throw new Error("Cpf informado não equivale a nenhum cidadão cadastrado.");
         }
 
+        const isPendente = true;
         const funcionario = this.funcionariosRepository.create({
-            cpf, cargo, local_trabalho
+            cpf, cargo, local_trabalho, isPendente
         });
         await this.funcionariosRepository.save(funcionario);
         return funcionario;
@@ -41,6 +42,7 @@ class FuncionariosService {
 
     async listarFuncionariosPendentes() {
         const lista = await this.funcionariosRepository.find({isPendente: true})
+        if (lista.length === 0) { return new Error("Não há cadastros de funcionários pendentes.")}
         return lista;
     }
 }
