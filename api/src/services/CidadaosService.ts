@@ -38,6 +38,14 @@ class CidadaosService {
         await this.cidadaosRepository.save(cidadao);
         return cidadao;
     }
+
+    async listarInformacoesCidadao(cpf: string) {
+        const cidadao = await this.cidadaosRepository.findOne({cpf});
+        if (!cidadao) {
+            throw new Error("Cpf inserido não corresponde a nenhum cidadão cadastrado.");
+        }
+        return cidadao;
+    }
 }
 
 export { CidadaosService };

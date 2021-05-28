@@ -14,7 +14,7 @@ class Funcionario {
     cargo: string;
 
     @Column()
-    localTrabalho: string;
+    local_trabalho: string;
 
     @Column()
     isPendente: boolean;

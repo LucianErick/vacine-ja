@@ -6,8 +6,21 @@ class CidadaosController {
         const { cpf, nome, endereco, num_cartao_sus, email, data_nascimento, telefone, profissao, comorbidade } = req.body;
         const cidadaosService = new CidadaosService();
         try {
-            const user = await cidadaosService.cadastrarCidadao({ cpf, nome, endereco, num_cartao_sus, email, data_nascimento, telefone, profissao, comorbidade })
-            return res.json(user);
+            const cidadao = await cidadaosService.cadastrarCidadao({ cpf, nome, endereco, num_cartao_sus, email, data_nascimento, telefone, profissao, comorbidade })
+            return res.json(cidadao);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+    async listarUsuario(req : Request, res : Response): Promise<Response> {
+        const { cpf } = req.params;
+        const cidadaosService = new CidadaosService();
+        try {
+            const cidadao = await cidadaosService.listarInformacoesCidadao(cpf);
+            return res.json(cidadao);
         } catch (err) {
             return res.status(400).json({
                 message: err.message
