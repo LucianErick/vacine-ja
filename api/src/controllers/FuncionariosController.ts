@@ -14,6 +14,21 @@ class FuncionariosController {
             })
         }
     }
+
+    async cadastrarLote(req: Request, res: Response): Promise<Response> {
+        const { vacina_id, quantidade, tipo_vacina, data_validade } = req.body;
+        const funcionariosService = new FuncionariosService();
+        try {
+            const lote = await funcionariosService.cadastrarLote({ vacina_id, quantidade, tipo_vacina, data_validade});
+            return res.json(lote);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+
 }
 
 export { FuncionariosController };

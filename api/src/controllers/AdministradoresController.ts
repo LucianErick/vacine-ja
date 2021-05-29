@@ -42,6 +42,62 @@ class AdministradoresController {
             })
         }
     }
-}
 
+    async cadastrarFabricante(req : Request, res : Response): Promise<Response> {
+        const {nome, pais} = req.body;
+        const adminService = new AdministradoresService();
+        try {
+            const listaFuncionarios = await adminService.cadastrarFabricante({nome, pais});
+            return res.json(listaFuncionarios);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+    async listarFabricantes(req : Request, res : Response): Promise<Response> {
+        const adminService = new AdministradoresService();
+        try {
+            const listaFabricantes = await adminService.listarFabricantes();
+            return res.json(listaFabricantes);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+    async cadastrarVacina(req : Request, res : Response): Promise<Response> {
+        const {nome, fabricante_id, num_doses_necessarias, intervalo_entre_doses} = req.body;
+        const adminService = new AdministradoresService();
+        try {
+            const vacina = await adminService.cadastrarVacina({nome, fabricante_id, num_doses_necessarias, intervalo_entre_doses});
+            return res.json(vacina);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+    async listarTiposDeVacina(req : Request, res : Response): Promise<Response> {
+        const adminService = new AdministradoresService();
+        const tiposVacina = await adminService.listarTiposDeVacina();
+        return res.json(tiposVacina);
+    }
+
+    async listarVacinas(req : Request, res : Response): Promise<Response> {
+        const adminService = new AdministradoresService();
+        try {
+            const listaVacinas = await adminService.listarVacinas();
+            return res.json(listaVacinas);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+}
 export { AdministradoresController };
