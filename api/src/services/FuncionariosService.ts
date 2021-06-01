@@ -48,7 +48,7 @@ class FuncionariosService {
             throw new Error("Cpf informado não equivale a nenhum cidadão cadastrado.");
         }
 
-        const isPendente = true;
+        const isPendente = true; // ao se cadastrar, a aprovacao esta pendente.
         const funcionario = this.funcionariosRepository.create({
             cpf, cargo, local_trabalho, isPendente
         });
@@ -74,14 +74,18 @@ class FuncionariosService {
         if (!vacinaExiste) { throw new Error("Vacina não existe.") }
         if (quantidade < 1) { throw new Error("Número de doses disponíveis inválida.") }
 
-        if (diferencaDias(data_validade) < 0 || diferencaDias(data_validade) > 1825) { throw new Error("Data de validade inválida.") }
+        if (diferencaDias(data_validade) <= 0 || diferencaDias(data_validade) > 1825) { throw new Error("Data de validade inválida.") }
 
         const lote = this.lotesRepository.create({ vacina_id, quantidade, tipo_vacina, data_validade });
-        await this.vacinasRepository.save(lote)
+        await this.lotesRepository.save(lote)
         return lote;
     }
 
-
+    async listarDoses() {
+        const listaLotes = await this.lotesRepository.find();
+        if (!listaLotes) { throw new Error("Sem lotes cadastrados.")}
+        return listaLotes;
+    }
 }
 
 export { FuncionariosService };

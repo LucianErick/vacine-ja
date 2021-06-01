@@ -27,7 +27,7 @@ export class CreateFuncionarios1622155721032 implements MigrationInterface {
                     {
                         name: "isPendente",
                         type: "boolean",
-                        default: true,
+
                     },
                     {
                         name: "criado_em",

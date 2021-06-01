@@ -28,7 +28,17 @@ class FuncionariosController {
         }
     }
 
-
+    async listarLotes(req : Request, res : Response): Promise<Response> {
+        const funcionariosService = new FuncionariosService();
+        try {
+            const listaLotes = await funcionariosService.listarDoses();
+            return res.json(listaLotes);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
 }
 
 export { FuncionariosController };
