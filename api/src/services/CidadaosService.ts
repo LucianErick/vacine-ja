@@ -8,10 +8,10 @@ interface ICriarUsuario {
     endereco: string;
     num_cartao_sus: string;
     email: string;
-    data_nascimento: string;
+    data_nascimento: Date;
     telefone: string;
-    profissao: string;
-    comorbidade: string;
+    profissao?: string;
+    comorbidade?: string;
 }
 
 class CidadaosService {
@@ -35,6 +35,7 @@ class CidadaosService {
             num_cartao_sus, email, data_nascimento,
             telefone, profissao, comorbidade
         });
+
         await this.cidadaosRepository.save(cidadao);
         return cidadao;
     }
@@ -45,6 +46,14 @@ class CidadaosService {
             throw new Error("Cpf inserido não corresponde a nenhum cidadão cadastrado.");
         }
         return cidadao;
+    }
+
+    async consultarEstagioVacinacao(cpf: string) {
+        const cidadao = await this.cidadaosRepository.findOne({cpf});
+        if (!cidadao) {
+            throw new Error("Cpf inserido não corresponde a nenhum cidadão cadastrado.");
+        }
+        return cidadao.estadoVacinacao.toString();
     }
 }
 

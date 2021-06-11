@@ -22,7 +22,7 @@ export class CreateVacinacao1622492602199 implements MigrationInterface {
                     },
                     {
                         name: "data",
-                        type: "timestamp",
+                        type: "datetime",
                         default: "now()",
                     },
                     {

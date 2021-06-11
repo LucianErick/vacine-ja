@@ -27,6 +27,19 @@ class CidadaosController {
             })
         }
     }
+
+    async consultarEstagioVacinacao(req : Request, res : Response): Promise<Response> {
+        const { cpf } = req.params;
+        const cidadaosService = new CidadaosService();
+        try {
+            const estagioVacinacao = await cidadaosService.consultarEstagioVacinacao(cpf);
+            return res.json(estagioVacinacao);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
 }
 
 export { CidadaosController };

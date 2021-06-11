@@ -13,6 +13,7 @@ const vacinacoesController = new VacinacoesController();
 
 routes.post("/cidadao", cidadaosController.cadastrarUsuario);
 routes.get("/cidadao/:cpf", cidadaosController.listarUsuario);
+routes.get("/cidadao/vacinacao/:cpf", cidadaosController.consultarEstagioVacinacao);
 routes.post("/funcionario", funcionarioController.cadastrarFuncionario);
 routes.get("/admin/listarPendentes", adminController.listarFuncionariosPendentes);
 routes.post("/admin/aprovar", adminController.aprovarCadastroFuncionario);
@@ -25,5 +26,8 @@ routes.get("/admin/vacinas", adminController.listarVacinas);
 routes.post("/funcionario/lote", funcionarioController.cadastrarLote);
 routes.get("/funcionario/lote", funcionarioController.listarLotes);
 routes.post("/funcionarios/vacinacao", vacinacoesController.cadastrarVacinacaoCidadao);
+routes.get("/funcionarios/vacinacao", vacinacoesController.listarHorariosOcupados);
+routes.post("/funcionarios/vacinacao/agendar", vacinacoesController.agendarVacinacaoUsuario);
+routes.post("/funcionarios/habilitar/:lote_vacina", funcionarioController.habilitarCidadao);
 
 export {routes};

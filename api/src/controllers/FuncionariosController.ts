@@ -39,6 +39,19 @@ class FuncionariosController {
             })
         }
     }
+
+    async habilitarCidadao(req : Request, res : Response): Promise<Response> {
+        const {lote_vacina} = req.params;
+        const funcionariosService = new FuncionariosService();
+        try {
+            const habilitandoCidadaos = await funcionariosService.habilitarCidadao(lote_vacina);
+            return res.json(habilitandoCidadaos);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
 }
 
 export { FuncionariosController };
