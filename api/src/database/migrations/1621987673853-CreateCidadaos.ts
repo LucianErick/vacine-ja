@@ -1,4 +1,4 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
 export class CreateCidadaos1621987673853 implements MigrationInterface {
 
@@ -55,6 +55,26 @@ export class CreateCidadaos1621987673853 implements MigrationInterface {
                         type: "timestamp",
                         default: "now()",
                     },
+                    {
+                        name: "estado_vacinacao",
+                        type: "tinyint"
+                    },
+                    {
+                        name: "vacina_aplicada",
+                        type: "uuid",
+                        isNullable: true,
+                    }
+                ],
+                foreignKeys: [
+                    {
+
+                        name: "FKCidadaoVacinaAplicada",
+                        referencedTableName: "vacinas",
+                        referencedColumnNames: ["id"],
+                        columnNames: ["vacina_aplicada"],
+                        onDelete: "SET NULL",
+                        onUpdate: "SET NULL",
+                    }
                 ]
             })
         )

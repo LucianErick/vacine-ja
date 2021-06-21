@@ -2,11 +2,9 @@
 // informando meu nome completo, endereço, CPF, número do cartão do SUS, e-mail, 
 //data de nascimento, telefone, profissão e comorbidades.
 
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { v4 as uuid } from "uuid";
-import { EstadoVacinacao } from "../pattern/EstadoVacinacao";
-import { Inabilitado } from "../pattern/Inabilitado";
-import { calcularIdade } from "../Util/util";
+import { EsperandoSegundaDose, EstadoVacinacao, HabilitadoPrimeiraDose, HabilitadoSegundaDose, Inabilitado } from "../pattern/EstadoVacinacao";
 import { Vacina } from "./Vacina";
 
 @Entity("cidadaos")
@@ -45,31 +43,76 @@ class Cidadao {
     @CreateDateColumn()
     criado_em: Date;
 
-    estadoVacinacao: EstadoVacinacao;
+    @Column()
+    estado_vacinacao: number;
 
-    vacinaAplicada: Vacina;
+    estado: EstadoVacinacao;
 
-    idade: number;
+    @JoinColumn({name: "vacina_aplicada"})
+    @OneToOne(() => Vacina)
+    vacina: Vacina;
+
+    @Column()
+    vacina_aplicada: string;
+
 
     constructor() {
         if (!this.id) {
             this.id = uuid();
-            this.estadoVacinacao = new Inabilitado();
-            this.vacinaAplicada = null;
-            this.idade = calcularIdade(this.data_nascimento);
+        }
+        this.estado = new Inabilitado();
+        this.iniciarEstado(this.estado);
+    }
+
+    iniciarEstado(estado: EstadoVacinacao): void {
+        if (estado instanceof Inabilitado) {
+            this.estado_vacinacao = 1;
+        } else if (estado instanceof HabilitadoPrimeiraDose) {
+            this.estado_vacinacao = 2;
+        } else if (estado instanceof EsperandoSegundaDose) {
+            this.estado_vacinacao = 3
+        } else if (estado instanceof HabilitadoSegundaDose) {
+            this.estado_vacinacao = 4
+        } else {
+            this.estado_vacinacao = 5;
         }
     }
 
+    setEstado(estado: EstadoVacinacao): void {
+        this.estado = estado;
+        this.iniciarEstado(estado);
+    }
+
+    mostrarEstado(): string {
+        let retorno = "";
+        switch (this.estado_vacinacao) {
+            case 1:
+                retorno = "INABILITADO temporariamente.";
+                break;
+            case 2:
+                retorno = "HABILITADO PARA PRIMEIRA DOSE.";
+                break;
+            case 3:
+                retorno = "ESPERANDO SEGUNDA DOSE.";
+                break;
+            case 4:
+                retorno = "HABILITADO PARA SEGUNDA DOSE.";
+                break;
+            case 5:
+                retorno = "VACINADO.";
+                break;
+        }
+        return retorno;
+    }
+
     atualizarEstado(): void {
-        return this.estadoVacinacao.atualizaEstado(this);
+        return this.estado.atualizarEstado(this);
     }
 
-    mostrarEstadoAtual(): string {
-        return this.estadoVacinacao.toString();
-    }
-
-    setEstado(novoEstado: EstadoVacinacao): void {
-        this.estadoVacinacao = novoEstado;
+    incrementarEstado(): void {
+        if (this.estado_vacinacao < 5) {
+            this.estado_vacinacao += 1;
+        }
     }
 }
 

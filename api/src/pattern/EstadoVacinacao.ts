@@ -1,17 +1,56 @@
 import { Cidadao } from "../entities/Cidadao";
 
-interface IEstadoVacinacao {
-    atualizaEstado(cidadao: Cidadao): void,
-    toString(): string
+interface EstadoVacinacao {
+    mostrarEstado(): string;
+    atualizarEstado(cidadao: Cidadao): void;
 }
 
-abstract class EstadoVacinacao implements IEstadoVacinacao {
-    atualizaEstado(cidadao: Cidadao): void {
-        throw new Error("Method not implemented.");
+class Inabilitado implements EstadoVacinacao {
+    mostrarEstado(): string {
+        return "cidadão INABILITADO para tomar a vacina no momento.";
     }
-    toString(): string {
-        throw new Error("Method not implemented.");
+    atualizarEstado(cidadao: Cidadao): void {
+        cidadao.setEstado(new HabilitadoPrimeiraDose());
     }
 }
 
-export { EstadoVacinacao }
+class HabilitadoPrimeiraDose implements EstadoVacinacao {
+    mostrarEstado(): string {
+        return "cidadão HABILITADO para PRIMEIRA DOSE.";
+    }
+    atualizarEstado(cidadao: Cidadao): void {
+        if (cidadao.vacina.num_doses_necessarias === 2) {
+            cidadao.setEstado(new EsperandoSegundaDose());
+        } else {
+            cidadao.setEstado(new Vacinado());
+        }
+    }
+}
+
+class EsperandoSegundaDose implements EstadoVacinacao {
+    mostrarEstado(): string {
+        return "cidadão ESPERANDO SEGUNDA DOSE.";
+    }
+    atualizarEstado(cidadao: Cidadao): void {
+        cidadao.setEstado(new HabilitadoSegundaDose());
+    }
+}
+
+class HabilitadoSegundaDose implements EstadoVacinacao {
+    mostrarEstado(): string {
+        return "cidadão HABILITADO para SEGUNDA DOSE.";
+    }
+    atualizarEstado(cidadao: Cidadao): void {
+        cidadao.setEstado(new Vacinado());
+    }
+}
+
+class Vacinado implements EstadoVacinacao {
+    mostrarEstado(): string {
+        return "cidadão VACINADO. VIVA O SUS!";
+    }
+    atualizarEstado(cidadao: Cidadao): void {
+        console.log("Vacinado.")
+    }
+}
+export {EstadoVacinacao, Inabilitado, HabilitadoPrimeiraDose, EsperandoSegundaDose, HabilitadoSegundaDose, Vacinado};

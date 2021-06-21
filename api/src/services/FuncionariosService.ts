@@ -83,23 +83,26 @@ class FuncionariosService {
 
     async listarDoses() {
         const listaLotes = await this.lotesRepository.find();
-        if (!listaLotes) { throw new Error("Sem lotes cadastrados.")}
+        if (!listaLotes) { throw new Error("Sem lotes cadastrados.") }
         return listaLotes;
     }
 
     async habilitarCidadao(lote_vacina: string) {
-        
         const lote = await this.lotesRepository.findOne({
             where: {
                 id: lote_vacina
             }
         });
+        if (!lote) { throw new Error("Lote de vacina não encontrado.") };
 
         const cidadaos = await this.cidadaosRepository.find();
-        cidadaos.forEach(cidadao => cidadao.atualizarEstado());
-
-        if (!lote) {throw new Error("Lote de vacina não encontrado.")};
-    }
+        cidadaos.forEach(cidadao => {
+            if (cidadao.estado_vacinacao == 1) {
+                cidadao.estado_vacinacao += 1;
+            }
+            this.cidadaosRepository.update({ id: `${cidadao.id}` }, { estado_vacinacao: cidadao.estado_vacinacao });
+        });
+    };
 }
 
 export { FuncionariosService };

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { FuncionariosService } from "../services/FuncionariosService";
+import { FuncionariosService } from "../services/FuncionariosService"; 
 
 class FuncionariosController {
     async cadastrarFuncionario(req: Request, res: Response): Promise<Response> {
