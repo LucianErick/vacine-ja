@@ -97,8 +97,10 @@ class VacinacoesService {
         if (diferencaDiasEntreDatas(lote.data_validade, data) < 0) { throw new Error("O lote da vacina está vencido.") };
 
         let novoEstado = cidadao.estado_vacinacao;
+        const primeiraDose = await this.vacinacoesRepository.findOne({ cidadao_id });
+        const tempoHabilSegundaDose = !primeiraDose ? false : Math.abs(diferencaDiasEntreDatas(primeiraDose.data, data)) >= vacina.intervalo_entre_doses;
 
-        console.log(`O Estado atual é: ${novoEstado}, O número de doses é ${vacina.num_doses_necessarias} e o número da dose é: ${numero_dose}`, this.tempoHabilParaSegundaDose(cidadao_id, data))
+
         if ((novoEstado === 2 && vacina.num_doses_necessarias === 1 && numero_dose === 1) ||
             novoEstado === 4 && vacina.num_doses_necessarias === 2 && numero_dose === 2) {
             novoEstado = 5;
@@ -106,14 +108,15 @@ class VacinacoesService {
             novoEstado = 3;
         } else if (novoEstado === 5) {
             throw new Error("Cidadão já vacinado.");
-        } else if (novoEstado === 3 && numero_dose === 2 && this.tempoHabilParaSegundaDose(cidadao_id, data)) {
+        } else if (novoEstado === 3 && numero_dose === 2 && tempoHabilSegundaDose) {
             novoEstado = 5
-        } else if (numero_dose === 2 && !this.tempoHabilParaSegundaDose(cidadao_id, data)) {
+        } else if (numero_dose === 2 && !tempoHabilSegundaDose) {
+            console.log(`O Estado atual é: ${novoEstado}, O número de doses é ${vacina.num_doses_necessarias} e o número da dose é: ${numero_dose}`);
             throw new Error("Cidadão ainda não habilitado para segunda dose.");
         } else {
             throw new Error("Erro ao registrar vacinação.");
         }
-        
+
         if (numero_dose === 2 && !cidadao.vacina_aplicada) {
             throw new Error("Primeira dose ainda não aplicada.");
         }
@@ -167,24 +170,6 @@ class VacinacoesService {
             })
         })
         return horariosJaOcupados;
-    }
-
-    private async tempoHabilParaSegundaDose(cidadao_id: string, dataVerificacao: Date) {
-        dataVerificacao = new Date(dataVerificacao);
-        const vacinacaoDeUsuario = await this.vacinacoesRepository.findOne({ cidadao_id });
-        const loteVacina = await this.lotesRepository.findOne({
-            where: {
-                id: vacinacaoDeUsuario.lote_id
-            }
-        })
-        const vacina = await this.vacinasRepository.findOne({
-            where: {
-                id: loteVacina.vacina_id
-            }
-        })
-
-        if (!vacinacaoDeUsuario) { throw new Error("Sem vacinação cadastrada.") };
-        return diferencaDiasEntreDatas(vacinacaoDeUsuario.data, dataVerificacao) >= vacina.intervalo_entre_doses;
     }
 }
 
