@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { FuncionariosService } from "../services/FuncionariosService"; 
+import { FuncionariosService } from "../services/FuncionariosService";
 
 class FuncionariosController {
     async cadastrarFuncionario(req: Request, res: Response): Promise<Response> {
@@ -19,7 +19,7 @@ class FuncionariosController {
         const { vacina_id, quantidade, tipo_vacina, data_validade } = req.body;
         const funcionariosService = new FuncionariosService();
         try {
-            const lote = await funcionariosService.cadastrarLote({ vacina_id, quantidade, tipo_vacina, data_validade});
+            const lote = await funcionariosService.cadastrarLote({ vacina_id, quantidade, tipo_vacina, data_validade });
             return res.json(lote);
         } catch (err) {
             return res.status(400).json({
@@ -28,7 +28,7 @@ class FuncionariosController {
         }
     }
 
-    async listarLotes(req : Request, res : Response): Promise<Response> {
+    async listarLotes(req: Request, res: Response): Promise<Response> {
         const funcionariosService = new FuncionariosService();
         try {
             const listaLotes = await funcionariosService.listarDoses();
@@ -40,11 +40,11 @@ class FuncionariosController {
         }
     }
 
-    async habilitarCidadao(req : Request, res : Response): Promise<Response> {
-        const {lote_vacina} = req.params;
+    async habilitarCidadao(req: Request, res: Response): Promise<Response> {
+        const { lote_id, parametro } = req.body;
         const funcionariosService = new FuncionariosService();
         try {
-            const habilitandoCidadaos = await funcionariosService.habilitarCidadao(lote_vacina);
+            const habilitandoCidadaos = await funcionariosService.habilitarCidadao({ lote_id, parametro });
             return res.json(habilitandoCidadaos);
         } catch (err) {
             return res.status(400).json({

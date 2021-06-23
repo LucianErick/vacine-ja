@@ -1,4 +1,4 @@
-import { getCustomRepository, Repository } from "typeorm"
+import { getCustomRepository, MoreThanOrEqual, Repository } from "typeorm"
 import { Cidadao } from "../entities/Cidadao";
 import { Funcionario } from "../entities/Funcionario";
 import { Lote } from "../entities/LoteVacina";
@@ -20,6 +20,11 @@ interface ICriarLote {
     quantidade: number;
     tipo_vacina: number;
     data_validade: Date;
+}
+
+interface IHabilitarCidadao {
+    lote_id: string,
+    parametro: string
 }
 
 class FuncionariosService {
@@ -87,16 +92,39 @@ class FuncionariosService {
         return listaLotes;
     }
 
-    async habilitarCidadao(lote_vacina: string) {
-        const lote = await this.lotesRepository.findOne({
-            where: {
-                id: lote_vacina
-            }
-        });
+    async habilitarCidadao({ lote_id, parametro }: IHabilitarCidadao) {
+        parametro = parametro.toUpperCase();
+        const lote = await this.lotesRepository.findOne({ where: { id: lote_id } })
         if (!lote) { throw new Error("Lote de vacina não encontrado.") };
 
-        const cidadaos = await this.cidadaosRepository.find();
-        cidadaos.forEach(cidadao => {
+        let listaPorParametro;
+
+        switch (lote.tipo_vacina) {
+            case 1:
+                listaPorParametro = await this.cidadaosRepository.find({
+                    where: {
+                        idade: MoreThanOrEqual(parametro)
+                    }
+                });
+                break;
+            case 2:
+                listaPorParametro = await this.cidadaosRepository.find({
+                    where: {
+                        profissao: parametro
+                    }
+                })
+                break;
+            case 3:
+                listaPorParametro = await this.cidadaosRepository.find({
+                    where: {
+                        comorbidade: parametro
+                    }
+                })
+                break;
+            default:
+                throw new Error("Opção inválida.");
+        }
+        listaPorParametro.forEach(cidadao => {
             if (cidadao.estado_vacinacao == 1) {
                 cidadao.estado_vacinacao += 1;
             }

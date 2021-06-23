@@ -5,6 +5,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { v4 as uuid } from "uuid";
 import { EsperandoSegundaDose, EstadoVacinacao, HabilitadoPrimeiraDose, HabilitadoSegundaDose, Inabilitado } from "../pattern/EstadoVacinacao";
+import { calcularIdade } from "../Util/util";
 import { Vacina } from "./Vacina";
 
 @Entity("cidadaos")
@@ -46,7 +47,8 @@ class Cidadao {
     @Column()
     estado_vacinacao: number;
 
-    estado: EstadoVacinacao;
+    @Column()
+    idade: number;
 
     @JoinColumn({name: "vacina_aplicada"})
     @OneToOne(() => Vacina)
@@ -60,27 +62,8 @@ class Cidadao {
         if (!this.id) {
             this.id = uuid();
         }
-        this.estado = new Inabilitado();
-        this.iniciarEstado(this.estado);
-    }
-
-    iniciarEstado(estado: EstadoVacinacao): void {
-        if (estado instanceof Inabilitado) {
-            this.estado_vacinacao = 1;
-        } else if (estado instanceof HabilitadoPrimeiraDose) {
-            this.estado_vacinacao = 2;
-        } else if (estado instanceof EsperandoSegundaDose) {
-            this.estado_vacinacao = 3
-        } else if (estado instanceof HabilitadoSegundaDose) {
-            this.estado_vacinacao = 4
-        } else {
-            this.estado_vacinacao = 5;
-        }
-    }
-
-    setEstado(estado: EstadoVacinacao): void {
-        this.estado = estado;
-        this.iniciarEstado(estado);
+        this.estado_vacinacao = 1;
+        this.idade = calcularIdade(this.data_nascimento);
     }
 
     mostrarEstado(): string {
@@ -103,10 +86,6 @@ class Cidadao {
                 break;
         }
         return retorno;
-    }
-
-    atualizarEstado(): void {
-        return this.estado.atualizarEstado(this);
     }
 
     incrementarEstado(): void {

@@ -14,12 +14,9 @@ export function diferencaDiasEntreDatas(dataFutura: Date, dataPassada: Date) {
     return dias;
 }
 
-export function calcularIdade(nascimento: Date) {
-    nascimento = new Date(nascimento);
-    const hoje = new Date();
-    let diferencaAnos = hoje.getFullYear() - nascimento.getFullYear();
-    if ( new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) < 
-         new Date(hoje.getFullYear(), nascimento.getMonth(), nascimento.getDate()) )
-        diferencaAnos--;
-    return diferencaAnos;
+export function calcularIdade(dataNascimento: Date) {
+    dataNascimento = new Date(dataNascimento);
+    let agora = new Date();
+    let diferenca = agora.getTime() - dataNascimento.getTime();
+    return Math.floor(diferenca / (1000 * 60 * 60 * 24 * 365.25));
 }

@@ -15,6 +15,19 @@ class CidadaosController {
         }
     }
 
+    async atualizarUsuario(req: Request, res: Response): Promise<Response> {
+        const { cpf, atributo, novoParametro } = req.body;
+        const cidadaosService = new CidadaosService();
+        try {
+            const cidadao = await cidadaosService.alterarDados(cpf, atributo, novoParametro);
+            return res.json(cidadao);
+        } catch (err) {
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
     async listarUsuario(req : Request, res : Response): Promise<Response> {
         const { cpf } = req.params;
         const cidadaosService = new CidadaosService();

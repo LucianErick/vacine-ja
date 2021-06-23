@@ -51,6 +51,10 @@ export class CreateCidadaos1621987673853 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
+                        name: "idade",
+                        type: "tinyint"
+                    },
+                    {
                         name: "criado_em",
                         type: "timestamp",
                         default: "now()",
